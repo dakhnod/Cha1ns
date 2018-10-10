@@ -11,31 +11,29 @@ moduleObjects = {}
 def rcallback(name, *args):
 	for chain in chains:
 		if chain[0] == name:
-			print("matching output " + chain[1].__name__ + " to input " + chain[0])
+			print("matching chain " + chain[-1].__module__ + " to input " + chain[0])
 			chain[-1](args)
 		else:
 			print("no output to input " + name)
 
-def chain(inputModule, *outputModules, callback):
-	chain = [inputModule.__name__]
-	if inputModule not in moduleObjects:
-		name = inputModule.__name__.split(".")[1].capitalize()
-		clas = getattr(inputModule, name)
-		object = clas()
-		if hasattr(object, "setup"):
-			object.setup(rcallback)
-		moduleObjects[inputModule] = object
-	for outputModule in outputModules:
-		if outputModule not in moduleObjects:
-			name = outputModule.__name__.split(".")[1].capitalize()
-			clas = getattr(outputModule, name)	
-			moduleObjects[outputModule] = clas
+def chain(*modules, callback):
+	chain = [modules[0].__name__]
+	for module in modules:
+		if module not in moduleObjects:
+			name = module.__name__.split(".")[1].capitalize()
+			clas = getattr(module, name)	
 			object = clas()
 			if hasattr(object, "setup"):
+				print("module " + object.__module__ + " setting up...")
+				if object.__module__.startswith("Input."):
+					object.callback = rcallback
 				object.setup()
-			moduleObjects[outputModule] = object
-		chain.append(outputModule)
+			moduleObjects[module] = object
+		else:
+			print("module " + module.__name__ + " already set up")
+		chain.append(module)
 	chain.append(callback)
+	chain.pop(1)
 	chains.append(chain)
 
 def setupChains():
@@ -44,13 +42,19 @@ def setupChains():
 		module = getattr(Chains, modname)
 		if hasattr(module, "setup"):
 			setupFunction = getattr(module, "setup")
-			print("setting up chain " + modname)
+			print("chain " + modname + " setting up")
 			setupFunction(chain, moduleObjects)
 		else:
 			print("chain " + modname + " has no setup")
-	#print(moduleObjects)
-	#print(chains)
 
+def cleanupModules():
+	for module, object in moduleObjects.items():
+		if hasattr(object, "cleanup"):
+			print("module " + module.__name__ + " cleaning up")
+			object.cleanup()
 
-setupChains()
-time.sleep(60)
+try:
+	setupChains()
+	time.sleep(60)
+finally:
+	cleanupModules()
