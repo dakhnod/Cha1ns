@@ -12,7 +12,9 @@ def rcallback(name, *args):
 	for chain in chains:
 		if chain[0] == name:
 			print("matching chain " + chain[-1].__module__ + " to input " + chain[0])
-			chain[-1](args)
+			if chain[-1](args):
+				print("chain requested abort")
+				return
 
 def chain(module_, modules, callback):
 	chain = [modules[0].__name__]

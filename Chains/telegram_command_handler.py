@@ -8,13 +8,13 @@ def callback(params):
 	id = params[0].message.chat_id
 	if not text.startswith("/"):
 		telegram.respondMessage(id, "sorry, i understand only commands")
-		return
+		return True
 	
 	if text.startswith("/picture "):
 		telegram.respondMessage(id, "stub!")
 	else:
 		telegram.respondMessage(id, "sorry, unknown command") 
-		
+	return True
 
 def setup():
 	return [Input.telegram_bot]
