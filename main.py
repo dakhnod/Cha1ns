@@ -3,7 +3,7 @@
 import pkgutil
 import Chains
 from Chains import *
-import time
+from time import sleep
 
 chains = []
 moduleObjects = {}
@@ -57,8 +57,10 @@ def cleanupModules():
 			print("module " + module.__name__ + " cleaning up")
 			object.cleanup()
 
+run = True
 try:
 	setupChains()
-	time.sleep(60)
+	while run: sleep(1)
+except KeyboardInterrupt: pass
 finally:
 	cleanupModules()

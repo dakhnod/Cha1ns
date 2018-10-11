@@ -1,0 +1,6 @@
+Chains/__pycache__/
+Input/__pycache__/
+Output/__pycache__/
+__pycache__/
+*.pyc
+*.jpg
