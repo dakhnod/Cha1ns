@@ -16,7 +16,7 @@ def rcallback(name, *args):
 		else:
 			print("no output to input " + name)
 
-def chain(*modules, callback):
+def chain(module_, modules, callback):
 	chain = [modules[0].__name__]
 	for module in modules:
 		if module not in moduleObjects:
@@ -30,8 +30,12 @@ def chain(*modules, callback):
 				object.setup()
 			moduleObjects[module] = object
 		else:
+			object = moduleObjects[module]
 			print("module " + module.__name__ + " already set up")
+		field = object.__module__.replace(".", "_")
+		setattr(module_, field, object)
 		chain.append(module)
+		
 	chain.append(callback)
 	chain.pop(1)
 	chains.append(chain)
@@ -43,7 +47,8 @@ def setupChains():
 		if hasattr(module, "setup"):
 			setupFunction = getattr(module, "setup")
 			print("chain " + modname + " setting up")
-			setupFunction(chain, moduleObjects)
+			args = setupFunction()
+			chain(module, args, module.callback)
 		else:
 			print("chain " + modname + " has no setup")
 

@@ -23,3 +23,6 @@ class Telegram_bot:
 
 	def cleanup(self):
 		self.updater.stop()
+	
+	def sendMessage(self, text):
+		self.updater.bot.sendMessage(chat_id=63620166, text=text)

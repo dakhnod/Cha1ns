@@ -4,6 +4,7 @@ from Output import telegram_bot
 
 
 def callback(params):
+	telegram = Input_telegram_bot
 	text = params[0].message.text
 	if not text.startswith("/"):
 		telegram.sendMessage("sorry, i understand only commands")
@@ -15,7 +16,5 @@ def callback(params):
 		telegram.sendMessage("sorry, unknown command") 
 		
 
-def setup(chain, moduleObjects):
-	chain(Input.telegram_bot, Output.telegram_bot, callback=callback)
-	global telegram
-	telegram = moduleObjects[Output.telegram_bot]
+def setup():
+	return [Input.telegram_bot]
