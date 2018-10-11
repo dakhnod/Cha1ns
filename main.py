@@ -13,8 +13,6 @@ def rcallback(name, *args):
 		if chain[0] == name:
 			print("matching chain " + chain[-1].__module__ + " to input " + chain[0])
 			chain[-1](args)
-		else:
-			print("no output to input " + name)
 
 def chain(module_, modules, callback):
 	chain = [modules[0].__name__]
@@ -25,9 +23,9 @@ def chain(module_, modules, callback):
 			object = clas()
 			if hasattr(object, "setup"):
 				print("module " + object.__module__ + " setting up...")
-				if object.__module__.startswith("Input."):
-					object.callback = rcallback
 				object.setup()
+			if object.__module__.startswith("Input."):
+				object.callback = rcallback
 			moduleObjects[module] = object
 		else:
 			object = moduleObjects[module]
@@ -45,9 +43,8 @@ def setupChains():
 	for importer, modname, ispackage in pkgutil.iter_modules(package.__path__):
 		module = getattr(Chains, modname)
 		if hasattr(module, "setup"):
-			setupFunction = getattr(module, "setup")
 			print("chain " + modname + " setting up")
-			args = setupFunction()
+			args = module.setup()
 			chain(module, args, module.callback)
 		else:
 			print("chain " + modname + " has no setup")

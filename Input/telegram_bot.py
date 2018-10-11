@@ -2,8 +2,6 @@ from telegram.ext import Updater,MessageHandler, CommandHandler, Filters
 import logging                                                                                                                                                                                                                                
 
 class Telegram_bot:
-	def start(self):
-		self.updater.start_polling()
 
 	def handler(self, bot, update):
 		self.callback(__name__, update)
@@ -23,6 +21,9 @@ class Telegram_bot:
 
 	def cleanup(self):
 		self.updater.stop()
+	
+	def respondMessage(self, chatid, text):
+		self.updater.bot.sendMessage(chat_id=63620166, text=text)
 	
 	def sendMessage(self, text):
 		self.updater.bot.sendMessage(chat_id=63620166, text=text)
